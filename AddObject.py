@@ -215,11 +215,11 @@ class AddObject(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onExecute(self, ec_id):
-        #追加画像が来た場合
-        #if self._In_imageIn.isNew():
-        #確認用ー座標配列が来た場合
+        #追加画像が来た場合(実際に使うとき)
+        if self._In_imageIn.isNew():
         #############################
-        if self._In_PositionSeqIn.isNew():
+        #確認用ー座標配列が来た場合
+        #if self._In_PositionSeqIn.isNew():
         #############################
             imageSeq_data=[]
             voiceSeq_data=[]
@@ -228,37 +228,58 @@ class AddObject(OpenRTM_aist.DataFlowComponentBase):
             #追加音声、画像を読み取る
             image_data=self._In_imageIn.read().data
             voice_data=self._In_voiceIn.read().data
+            #確認用
+            ###########################################################
+            print(f"voice型:{type(voice_data)},voice_data:{voice_data}")
+            ###########################################################
+
 
             #現在の音声配列、画像配列、座標配列のデータを読み取る
             imageSeq_data=self._In_imageSeqIn.read().data
             voiceSeq_data=self._In_VoiceSeqIn.read().data
             positionSeq_data=self._In_PositionSeqIn.read().data
+
             #確認用
             ################################################
             for data in positionSeq_data:
                 print("追加前の座標要素",data)
             ################################################
+            #確認用
+            ################################################
+            for data in voiceSeq_data:
+                print("追加前のvoice要素",data)
+            ################################################
+
+
 
             #画像データ、音声データ,配列データ（０、０）をそれぞれの配列に追加する
             imageSeq_data.append(image_data)
             voiceSeq_data.append(voice_data)
             positionSeq_data.append(0)#x座標
             positionSeq_data.append(0)#y座標
+
+
             #確認用
             ################################################
             for data in positionSeq_data:
                 print("追加後の座標要素",data)
             ################################################
+            #確認用
+            ################################################
+            for data in voiceSeq_data:
+                print("追加後のvoice要素",data)
+            ################################################
+
 
             #画像データ、音声データは型をTimedOctedSeqに変更       
-            #Outvoice=RTC.TimedOctedSeq(RTC.Time(0, 0), voiceSeq_data)
-            #Outimage=RTC.TimedOctedSeq(RTC.Time(0, 0), imageSeq_data)
+            Outvoice=RTC.TimedOctedSeq(RTC.Time(0, 0), voiceSeq_data)
+            Outimage=RTC.TimedOctedSeq(RTC.Time(0, 0), imageSeq_data)
             #座標データは型をTimedShortSeqに変換
             Outposition = RTC.TimedShortSeq(RTC.Time(0, 0), positionSeq_data)
 
             #OutPortでそれぞれの配列を出力
-            #self._Out_VoiceSeqOut.write(Outvoice)
-            #self._Out_ImageSeqOut.write(Outimage)
+            self._Out_VoiceSeqOut.write(Outvoice)
+            self._Out_ImageSeqOut.write(Outimage)
             self._Out_PositionSeqOut.write(Outposition)
 
         return RTC.RTC_OK
