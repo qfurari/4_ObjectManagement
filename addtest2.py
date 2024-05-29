@@ -94,6 +94,7 @@ class AddObject(OpenRTM_aist.DataFlowComponentBase):
             analysisSeq_data = []
             voiceSeq_data = []
             positionSeq_data =[]
+           
             
             if self._In_VoiceSeqIn.isNew():
                 # Read voice sequence data
@@ -115,14 +116,6 @@ class AddObject(OpenRTM_aist.DataFlowComponentBase):
                 analysisSeq_data = self._In_imageSeqIn.read().data
                 #analysisSeq_data.append(analysisIn_data)
                 print(f"Received analysis data: {analysisSeq_data}")
-
-            if self._In_PositionSeqIn.isNew():
-                # Read position sequence data
-                while self._In_PositionSeqIn.isNew():
-                    positionIn_data = self._In_PositionSeqIn.read().data
-                    positionSeq_data.append(positionIn_data)
-                print(F"Resived position_Data{positionSeq_data}")
-
 
             # For verification
             ################################################
@@ -163,7 +156,24 @@ class AddObject(OpenRTM_aist.DataFlowComponentBase):
             for data in positionSeq_data:
                 Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
                 self._Out_PositionSeqOut.write(Outimage)
-
+        else:
+            if self._In_PositionSeqIn.isNew():
+                 # Read position sequence data
+                 positionSeq_data =[]
+                 while self._In_PositionSeqIn.isNew():
+                     time.sleep(0.005)
+                     positionIn_data = self._In_PositionSeqIn.read().data
+                     positionSeq_data.append(positionIn_data)
+                 print(F"Resived position_Data{positionSeq_data}")
+                 
+                 # Send position data
+                 # Simply send positions one by one (consider pairs of two as coordinates) - under development
+                 for data in positionSeq_data:
+                     Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
+                     self._Out_PositionSeqOut.write(Outimage)
+                 
+             
+            
         return RTC.RTC_OK
 
 def AddObjectInit(manager):
