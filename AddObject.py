@@ -1,4 +1,6 @@
-﻿#!/usr/bin/env python
+
+
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # -*- Python -*-
 
@@ -7,375 +9,250 @@
  @file AddObject.py
  @brief ModuleDescription
  @date $Date$
-
-
 """
 # </rtc-template>
 
 import sys
 import time
-from random import random
+
 sys.path.append(".")
 
 # Import RTM module
 import RTC
 import OpenRTM_aist
 
-
-# Import Service implementation class
-# <rtc-template block="service_impl">
-
-# </rtc-template>
-
-# Import Service stub modules
-# <rtc-template block="consumer_import">
-# </rtc-template>
-
-
-# This module's spesification
-# <rtc-template block="module_spec">
+# This module's specification
 addobject_spec = ["implementation_id", "AddObject", 
-         "type_name",         "AddObject", 
-         "description",       "ModuleDescription", 
-         "version",           "1.0.0", 
-         "vendor",            "arai", 
-         "category",          "test", 
-         "activity_type",     "STATIC", 
-         "max_instance",      "1", 
-         "language",          "Python", 
-         "lang_type",         "SCRIPT",
-         ""]
-# </rtc-template>
+                  "type_name",         "AddObject", 
+                  "description",       "ModuleDescription", 
+                  "version",           "1.0.0", 
+                  "vendor",            "arai", 
+                  "category",          "test", 
+                  "activity_type",     "STATIC", 
+                  "max_instance",      "1", 
+                  "language",          "Python", 
+                  "lang_type",         "SCRIPT",
+                  ""]
 
-# <rtc-template block="component_description">
-##
-# @class AddObject
-# @brief ModuleDescription
-# 
-# 
-# </rtc-template>
 class AddObject(OpenRTM_aist.DataFlowComponentBase):
-	
-    ##
-    # @brief constructor
-    # @param manager Maneger Object
-    # 
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
         self._d_In_voice = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
-        """
-        """
         self._In_voiceIn = OpenRTM_aist.InPort("In_voice", self._d_In_voice)
-        self._d_In_image = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
-        """
-        """
-        self._In_imageIn = OpenRTM_aist.InPort("In_image", self._d_In_image)
-        self._d_In_VoiceSeq = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
-        """
-        """
-        self._In_VoiceSeqIn = OpenRTM_aist.InPort("In_VoiceSeq", self._d_In_VoiceSeq)
-        self._d_In_imageSeq = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
-        """
-        """
-        self._In_imageSeqIn = OpenRTM_aist.InPort("In_imageSeq", self._d_In_imageSeq)
-        self._d_In_PositionSeq = OpenRTM_aist.instantiateDataType(RTC.TimedShortSeq)
-        """
-        """
-        self._In_PositionSeqIn = OpenRTM_aist.InPort("In_PositionSeq", self._d_In_PositionSeq)
-        self._d_Out_VoiceSeq = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
-        """
-        """
-        self._Out_VoiceSeqOut = OpenRTM_aist.OutPort("Out_VoiceSeq", self._d_Out_VoiceSeq)
-        self._d_Out_ImageSeq = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
-        """
-        """
-        self._Out_ImageSeqOut = OpenRTM_aist.OutPort("Out_ImageSeq", self._d_Out_ImageSeq)
-        self._d_Out_PositionSeq = OpenRTM_aist.instantiateDataType(RTC.TimedShortSeq)
-        """
-        """
-        self._Out_PositionSeqOut = OpenRTM_aist.OutPort("Out_PositionSeq", self._d_Out_PositionSeq)
-
-
-		
-
-
-        # initialize of configuration-data.
-        # <rtc-template block="init_conf_param">
-		
-        # </rtc-template>
-
-
-		 
-    ##
-    #
-    # The initialize action (on CREATED->ALIVE transition)
-    # 
-    # @return RTC::ReturnCode_t
-    # 
-    #
-    def onInitialize(self):
-        # Bind variables and configuration variable
-		
-        # Set InPort buffers
-        self.addInPort("In_voice",self._In_voiceIn)
-        self.addInPort("In_image",self._In_imageIn)
-        self.addInPort("In_VoiceSeq",self._In_VoiceSeqIn)
-        self.addInPort("In_imageSeq",self._In_imageSeqIn)
-        self.addInPort("In_PositionSeq",self._In_PositionSeqIn)
-		
-        # Set OutPort buffers
-        self.addOutPort("Out_VoiceSeq",self._Out_VoiceSeqOut)
-        self.addOutPort("Out_ImageSeq",self._Out_ImageSeqOut)
-        self.addOutPort("Out_PositionSeq",self._Out_PositionSeqOut)
-		
-        # Set service provider to Ports
-		
-        # Set service consumers to Ports
-		
-        # Set CORBA Service Ports
-		
-        return RTC.RTC_OK
-	
-    ###
-    ## 
-    ## The finalize action (on ALIVE->END transition)
-    ## 
-    ## @return RTC::ReturnCode_t
-    #
-    ## 
-    #def onFinalize(self):
-    #
-
-    #    return RTC.RTC_OK
-	
-    ###
-    ##
-    ## The startup action when ExecutionContext startup
-    ## 
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-    ##
-    #def onStartup(self, ec_id):
-    #
-    #    return RTC.RTC_OK
-	
-    ###
-    ##
-    ## The shutdown action when ExecutionContext stop
-    ##
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-    ##
-    #def onShutdown(self, ec_id):
-    #
-    #    return RTC.RTC_OK
-	
-    ##
-    #
-    # The activated action (Active state entry action)
-    #
-    # @param ec_id target ExecutionContext Id
-    # 
-    # @return RTC::ReturnCode_t
-    #
-    #
-    def onActivated(self, ec_id):
-    
-        return RTC.RTC_OK
-	
-    ##
-    #
-    # The deactivated action (Active state exit action)
-    #
-    # @param ec_id target ExecutionContext Id
-    #
-    # @return RTC::ReturnCode_t
-    #
-    #
-    def onDeactivated(self, ec_id):
         
+        self._d_In_analysis = OpenRTM_aist.instantiateDataType(RTC.TimedShort)
+        self._In_analysis = OpenRTM_aist.InPort("In_analysis", self._d_In_analysis)
+        
+        self._d_In_VoiceSeq = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
+        self._In_VoiceSeqIn = OpenRTM_aist.InPort("In_VoiceSeq", self._d_In_VoiceSeq)
+        
+        self._d_In_analysisSeq = OpenRTM_aist.instantiateDataType(RTC.TimedShortSeq)
+        self._In_imageSeqIn = OpenRTM_aist.InPort("In_imageSeq", self._d_In_analysisSeq)
+        
+        self._d_In_PositionSeq = OpenRTM_aist.instantiateDataType(RTC.TimedShortSeq)
+        self._In_PositionSeqIn = OpenRTM_aist.InPort("In_PositionSeq", self._d_In_PositionSeq)
+        
+        self._d_Out_VoiceSeq = OpenRTM_aist.instantiateDataType(RTC.TimedOctetSeq)
+        self._Out_VoiceSeqOut = OpenRTM_aist.OutPort("Out_VoiceSeq", self._d_Out_VoiceSeq)
+        
+        self._d_Out_analysisSeq = OpenRTM_aist.instantiateDataType(RTC.TimedShortSeq)
+        self._Out_analysisSeqOut = OpenRTM_aist.OutPort("Out_analysisSeq", self._d_Out_analysisSeq)
+        
+        self._d_Out_PositionSeq = OpenRTM_aist.instantiateDataType(RTC.TimedShortSeq)
+        self._Out_PositionSeqOut = OpenRTM_aist.OutPort("Out_PositionSeq", self._d_Out_PositionSeq)
+        
+        self.analysisSeq_data = []
+        self.voiceSeq_data = []
+        self.positionSeq_data =[]
 
-            
-            
-
+    def onInitialize(self):
+        self.addInPort("In_voice", self._In_voiceIn)
+        self.addInPort("In_analysis", self._In_analysis)
+        self.addInPort("In_VoiceSeq", self._In_VoiceSeqIn)
+        self.addInPort("In_imageSeq", self._In_imageSeqIn)
+        self.addInPort("In_PositionSeq", self._In_PositionSeqIn)
+        
+        self.addOutPort("Out_VoiceSeq", self._Out_VoiceSeqOut)
+        self.addOutPort("Out_analysisSeq", self._Out_analysisSeqOut)
+        self.addOutPort("Out_PositionSeq", self._Out_PositionSeqOut)
+        
         return RTC.RTC_OK
-	
-    ##
-    #
-    # The execution action that is invoked periodically
-    #
-    # @param ec_id target ExecutionContext Id
-    #
-    # @return RTC::ReturnCode_t
-    #
-    #
+
+    def onActivated(self, ec_id):
+        return RTC.RTC_OK
+
+    def onDeactivated(self, ec_id):
+        return RTC.RTC_OK
+
     def onExecute(self, ec_id):
-        #追加画像が来た場合(実際に使うとき)
-        if self._In_imageIn.isNew():
-        #############################
-        #確認用ー座標配列が来た場合
-        #if self._In_PositionSeqIn.isNew():
-        #############################
-            imageSeq_data=[]
-            voiceSeq_data=[]
-            positionSeq_data=[]
+        import random
 
-            #追加音声、画像を読み取る
-            image_data=self._In_imageIn.read().data
-            voice_data=self._In_voiceIn.read().data
-            #確認用
-            ###########################################################
-            print(f"voice型:{type(voice_data)},voice_data:{voice_data}")
-            ###########################################################
+        # �����v�f��ǉ�����ꍇ
+        if self._In_voiceIn.isNew():
+
+            if len(self.voiceSeq_data)>=8:
+                print("Length of read voice sequence data is full")
+                return RTC.RTC_OK
+
+            # Read additional voice and analysis data
+            analysis_data = self._In_analysis.read().data
+            voice_data = self._In_voiceIn.read().data
+            print("Additional information read complete")
+            ppositionSeq_data=[]
+            time.sleep(0.8)
+            if self._In_PositionSeqIn.isNew():
+                print("add inserted!!")
+                 # Read position sequence data
+                while self._In_PositionSeqIn.isNew():
+                    time.sleep(0.005)
+                    positionIn_data = self._In_PositionSeqIn.read().data
+                    ppositionSeq_data.append(positionIn_data)
 
 
-            #現在の音声配列、画像配列、座標配列のデータを読み取る
-            imageSeq_data=self._In_imageSeqIn.read().data
-            voiceSeq_data=self._In_VoiceSeqIn.read().data
-            positionSeq_data=self._In_PositionSeqIn.read().data
-
-            #確認用
+               # For verification
             ################################################
-            for data in positionSeq_data:
-                print("追加前の座標要素",data)
-            ################################################
-            #確認用
-            ################################################
-            for data in voiceSeq_data:
-                print("追加前のvoice要素",data)
+            print("before Length of voice sequence: "+str(len(self.voiceSeq_data)))
+            print("before Length of analysis sequence: "+str(len(self.analysisSeq_data)))
+            print("before Length of position sequence: "+str(len(ppositionSeq_data)))
             ################################################
 
+            # Add the received voice data, analysis data, and position data (50, 50) to each sequence
+            self.voiceSeq_data.append(voice_data)
+            self.analysisSeq_data.append(analysis_data)
+            random_x = random.randint(1, 640)
+            random_y = random.randint(1, 480)
+            ppositionSeq_data.append([random_x, random_y])
+         
+            print("Adding elements...")
 
-
-            #画像データ、音声データ,配列データ（０、０）をそれぞれの配列に追加する
-            imageSeq_data.append(image_data)
-            voiceSeq_data.append(voice_data)
-            positionSeq_data.append(0)#x座標
-            positionSeq_data.append(0)#y座標
-
-
-            #確認用
+            # For verification
             ################################################
-            for data in positionSeq_data:
-                print("追加後の座標要素",data)
+            print("Addition complete..")
+            print("after Length of voice sequence: "+str(len(self.voiceSeq_data)))
+            print("after Length of analysis sequence: "+str(len(self.analysisSeq_data)))
+            print("after Length of position sequence: "+str(len(ppositionSeq_data)))
             ################################################
-            #確認用
+            print("positiondata:",ppositionSeq_data)
+
+            # Send data one by one
+            # Send voice data
+            for data in self.voiceSeq_data:
+                Outvoice = RTC.TimedOctetSeq(RTC.Time(0, 0), data)
+                self._Out_VoiceSeqOut.write(Outvoice)
+            
+            # Send analysis data
+            Outanalysis = RTC.TimedShortSeq(RTC.Time(0, 0), self.analysisSeq_data)
+            self._Out_analysisSeqOut.write(Outanalysis)
+
+            # Send position data
+            # Simply send positions one by one (consider pairs of two as coordinates) - under development
+            for data in ppositionSeq_data:
+                Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
+                self._Out_PositionSeqOut.write(Outimage) 
+                 
+                
+        #�z��v�f���������������ꍇ
+        elif self._In_VoiceSeqIn.isNew():
+            
+            if self._In_VoiceSeqIn.isNew():
+                # Read voice sequence data
+                self.voiceSeq_data.clear()
+                while self._In_VoiceSeqIn.isNew():
+                    time.sleep(0.005)
+                    voiceIn_data = self._In_VoiceSeqIn.read().data
+                    self.voiceSeq_data.append(voiceIn_data)
+                    
+                
+                print("Length of read voice sequence data: "+str(len(self.voiceSeq_data)))
+            if self._In_imageSeqIn.isNew():
+                # Read analysis sequence data
+                self.analysisSeq_data = self._In_imageSeqIn.read().data
+                #analysisSeq_data.append(analysisIn_data)
+                print(f"Received analysis data: {self.analysisSeq_data}")
+                
+            if self._In_PositionSeqIn.isNew():
+                 # Read position sequence data
+                 self.positionSeq_data.clear()
+
+                 while self._In_PositionSeqIn.isNew():
+                     time.sleep(0.005)
+                     positionIn_data = self._In_PositionSeqIn.read().data
+                     self.positionSeq_data.append(positionIn_data)
+                 print(F"Resived position_Data{self.positionSeq_data}")
+             
+
+            # For verification
             ################################################
-            for data in voiceSeq_data:
-                print("追加後のvoice要素",data)
+            print("before Length of voice sequence: "+str(len(self.voiceSeq_data)))
+            print("before Length of analysis sequence: "+str(len(self.analysisSeq_data)))
+            print("before Length of position sequence: "+str(len(self.positionSeq_data)))
             ################################################
 
+            # Add the received voice data, analysis data, and position data (50, 50) to each sequence
+            
+         
+            print("Adding elements...")
 
-            #画像データ、音声データは型をTimedOctedSeqに変更       
-            Outvoice=RTC.TimedOctedSeq(RTC.Time(0, 0), voiceSeq_data)
-            Outimage=RTC.TimedOctedSeq(RTC.Time(0, 0), imageSeq_data)
-            #座標データは型をTimedShortSeqに変換
-            Outposition = RTC.TimedShortSeq(RTC.Time(0, 0), positionSeq_data)
+            # For verification
+            ################################################
+            print("Addition complete..")
+            print("after Length of voice sequence: "+str(len(self.voiceSeq_data)))
+            print("after Length of analysis sequence: "+str(len(self.analysisSeq_data)))
+            print("after Length of position sequence: "+str(len(self.positionSeq_data)))
+            ################################################
 
-            #OutPortでそれぞれの配列を出力
-            self._Out_VoiceSeqOut.write(Outvoice)
-            self._Out_ImageSeqOut.write(Outimage)
-            self._Out_PositionSeqOut.write(Outposition)
+            # Send data one by one
+            # Send voice data
+            for data in self.voiceSeq_data:
+                Outvoice = RTC.TimedOctetSeq(RTC.Time(0, 0), data)
+                self._Out_VoiceSeqOut.write(Outvoice)
+            
+            # Send analysis data
+            Outanalysis = RTC.TimedShortSeq(RTC.Time(0, 0), self.analysisSeq_data)
+            self._Out_analysisSeqOut.write(Outanalysis)
 
+            # Send position data
+            # Simply send positions one by one (consider pairs of two as coordinates) - under development
+            for data in self.positionSeq_data:
+                Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
+                self._Out_PositionSeqOut.write(Outimage)
+            return RTC.RTC_OK
+        else:
+            ppositionSeq_data=[]
+            if self._In_PositionSeqIn.isNew():
+                 # Read position sequence data
+                while self._In_PositionSeqIn.isNew():
+                    time.sleep(0.005)
+                    positionIn_data = self._In_PositionSeqIn.read().data
+                    ppositionSeq_data.append(positionIn_data)
+                print(F"Resived position_Data{ppositionSeq_data}")
+             
+                 # Send position data
+                 # Simply send positions one by one (consider pairs of two as coordinates) - under development
+            for data in ppositionSeq_data:
+                 Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
+                 self._Out_PositionSeqOut.write(Outimage)
+                 
+             
+            
         return RTC.RTC_OK
-	
-    ###
-    ##
-    ## The aborting action when main logic error occurred.
-    ##
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-    ##
-    #def onAborting(self, ec_id):
-    #
-    #    return RTC.RTC_OK
-	
-    ###
-    ##
-    ## The error action in ERROR state
-    ##
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-    ##
-    #def onError(self, ec_id):
-    #
-    #    return RTC.RTC_OK
-	
-    ###
-    ##
-    ## The reset action that is invoked resetting
-    ##
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-    ##
-    #def onReset(self, ec_id):
-    #
-    #    return RTC.RTC_OK
-	
-    ###
-    ##
-    ## The state update action that is invoked after onExecute() action
-    ##
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-
-    ##
-    #def onStateUpdate(self, ec_id):
-    #
-    #    return RTC.RTC_OK
-	
-    ###
-    ##
-    ## The action that is invoked when execution context's rate is changed
-    ##
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-    ##
-    #def onRateChanged(self, ec_id):
-    #
-    #    return RTC.RTC_OK
-	
-
-
 
 def AddObjectInit(manager):
     profile = OpenRTM_aist.Properties(defaults_str=addobject_spec)
-    manager.registerFactory(profile,
-                            AddObject,
-                            OpenRTM_aist.Delete)
+    manager.registerFactory(profile, AddObject, OpenRTM_aist.Delete)
 
 def MyModuleInit(manager):
     AddObjectInit(manager)
-
-    # create instance_name option for createComponent()
     instance_name = [i for i in sys.argv if "--instance_name=" in i]
     if instance_name:
         args = instance_name[0].replace("--", "?")
     else:
         args = ""
-  
-    # Create a component
     comp = manager.createComponent("AddObject" + args)
 
 def main():
-    # remove --instance_name= option
     argv = [i for i in sys.argv if not "--instance_name=" in i]
-    # Initialize manager
     mgr = OpenRTM_aist.Manager.init(sys.argv)
     mgr.setModuleInitProc(MyModuleInit)
     mgr.activateManager()
