@@ -1,5 +1,7 @@
 
 
+
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # -*- Python -*-
@@ -62,9 +64,7 @@ class AddObject(OpenRTM_aist.DataFlowComponentBase):
         self._d_Out_PositionSeq = OpenRTM_aist.instantiateDataType(RTC.TimedShortSeq)
         self._Out_PositionSeqOut = OpenRTM_aist.OutPort("Out_PositionSeq", self._d_Out_PositionSeq)
         
-        self.analysisSeq_data = []
-        self.voiceSeq_data = []
-        self.positionSeq_data =[]
+       
 
     def onInitialize(self):
         self.addInPort("In_voice", self._In_voiceIn)
@@ -88,151 +88,96 @@ class AddObject(OpenRTM_aist.DataFlowComponentBase):
     def onExecute(self, ec_id):
         import random
 
-        # �����v�f��ǉ�����ꍇ
+        # If new voice data is available
         if self._In_voiceIn.isNew():
-
-            if len(self.voiceSeq_data)>=8:
-                print("Length of read voice sequence data is full")
-                return RTC.RTC_OK
 
             # Read additional voice and analysis data
             analysis_data = self._In_analysis.read().data
             voice_data = self._In_voiceIn.read().data
             print("Additional information read complete")
-            ppositionSeq_data=[]
-            time.sleep(0.8)
-            if self._In_PositionSeqIn.isNew():
-                print("add inserted!!")
-                 # Read position sequence data
-                while self._In_PositionSeqIn.isNew():
-                    time.sleep(0.005)
-                    positionIn_data = self._In_PositionSeqIn.read().data
-                    ppositionSeq_data.append(positionIn_data)
 
-
-               # For verification
-            ################################################
-            print("before Length of voice sequence: "+str(len(self.voiceSeq_data)))
-            print("before Length of analysis sequence: "+str(len(self.analysisSeq_data)))
-            print("before Length of position sequence: "+str(len(ppositionSeq_data)))
-            ################################################
-
-            # Add the received voice data, analysis data, and position data (50, 50) to each sequence
-            self.voiceSeq_data.append(voice_data)
-            self.analysisSeq_data.append(analysis_data)
-            random_x = random.randint(1, 640)
-            random_y = random.randint(1, 480)
-            ppositionSeq_data.append([random_x, random_y])
-         
-            print("Adding elements...")
-
-            # For verification
-            ################################################
-            print("Addition complete..")
-            print("after Length of voice sequence: "+str(len(self.voiceSeq_data)))
-            print("after Length of analysis sequence: "+str(len(self.analysisSeq_data)))
-            print("after Length of position sequence: "+str(len(ppositionSeq_data)))
-            ################################################
-            print("positiondata:",ppositionSeq_data)
-
-            # Send data one by one
-            # Send voice data
-            for data in self.voiceSeq_data:
-                Outvoice = RTC.TimedOctetSeq(RTC.Time(0, 0), data)
-                self._Out_VoiceSeqOut.write(Outvoice)
+            # Read current voice sequence, analysis sequence, and position sequence data
             
-            # Send analysis data
-            Outanalysis = RTC.TimedShortSeq(RTC.Time(0, 0), self.analysisSeq_data)
-            self._Out_analysisSeqOut.write(Outanalysis)
-
-            # Send position data
-            # Simply send positions one by one (consider pairs of two as coordinates) - under development
-            for data in ppositionSeq_data:
-                Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
-                self._Out_PositionSeqOut.write(Outimage) 
-                 
-                
-        #�z��v�f���������������ꍇ
-        elif self._In_VoiceSeqIn.isNew():
+            voiceSeq_data = []
+            positionSeq_data =[]
+            analysisSeq_data = []
+           
             
             if self._In_VoiceSeqIn.isNew():
                 # Read voice sequence data
-                self.voiceSeq_data.clear()
                 while self._In_VoiceSeqIn.isNew():
                     time.sleep(0.005)
                     voiceIn_data = self._In_VoiceSeqIn.read().data
-                    self.voiceSeq_data.append(voiceIn_data)
+                    voiceSeq_data.append(voiceIn_data)
                     
+                if len(voiceSeq_data)>=8:
+                    print("Length of read voice sequence data is full")
+                    for data in voiceSeq_data:
+                        Outvoice = RTC.TimedOctetSeq(RTC.Time(0, 0), data)
+                        self._Out_VoiceSeqOut.write(Outvoice)
+                    return RTC.RTC_OK
                 
-                print("Length of read voice sequence data: "+str(len(self.voiceSeq_data)))
+                print("Length of read voice sequence data: "+str(len(voiceSeq_data)))
             if self._In_imageSeqIn.isNew():
                 # Read analysis sequence data
-                self.analysisSeq_data = self._In_imageSeqIn.read().data
+                analysisSeq_data = self._In_imageSeqIn.read().data
                 #analysisSeq_data.append(analysisIn_data)
-                print(f"Received analysis data: {self.analysisSeq_data}")
-                
-            if self._In_PositionSeqIn.isNew():
-                 # Read position sequence data
-                 self.positionSeq_data.clear()
-
-                 while self._In_PositionSeqIn.isNew():
-                     time.sleep(0.005)
-                     positionIn_data = self._In_PositionSeqIn.read().data
-                     self.positionSeq_data.append(positionIn_data)
-                 print(F"Resived position_Data{self.positionSeq_data}")
-             
+                print(f"Received analysis data: {analysisSeq_data}")
 
             # For verification
             ################################################
-            print("before Length of voice sequence: "+str(len(self.voiceSeq_data)))
-            print("before Length of analysis sequence: "+str(len(self.analysisSeq_data)))
-            print("before Length of position sequence: "+str(len(self.positionSeq_data)))
+            print("before Length of voice sequence: "+str(len(voiceSeq_data)))
+            print("before Length of analysis sequence: "+str(len(analysisSeq_data)))
+            print("before Length of position sequence: "+str(len(positionSeq_data)))
             ################################################
 
             # Add the received voice data, analysis data, and position data (50, 50) to each sequence
-            
+            voiceSeq_data.append(voice_data)
+            analysisSeq_data.append(analysis_data)
+            random_x = random.randint(1, 1440)
+            random_y = random.randint(1, 960)
+            positionSeq_data.append([random_x, random_y])
          
             print("Adding elements...")
 
             # For verification
             ################################################
             print("Addition complete..")
-            print("after Length of voice sequence: "+str(len(self.voiceSeq_data)))
-            print("after Length of analysis sequence: "+str(len(self.analysisSeq_data)))
-            print("after Length of position sequence: "+str(len(self.positionSeq_data)))
+            print("after Length of voice sequence: "+str(len(voiceSeq_data)))
+            print("after Length of analysis sequence: "+str(len(analysisSeq_data)))
+            print("after Length of position sequence: "+str(len(positionSeq_data)))
             ################################################
 
             # Send data one by one
             # Send voice data
-            for data in self.voiceSeq_data:
+            for data in voiceSeq_data:
                 Outvoice = RTC.TimedOctetSeq(RTC.Time(0, 0), data)
                 self._Out_VoiceSeqOut.write(Outvoice)
             
             # Send analysis data
-            Outanalysis = RTC.TimedShortSeq(RTC.Time(0, 0), self.analysisSeq_data)
+            Outanalysis = RTC.TimedShortSeq(RTC.Time(0, 0), analysisSeq_data)
             self._Out_analysisSeqOut.write(Outanalysis)
 
             # Send position data
             # Simply send positions one by one (consider pairs of two as coordinates) - under development
-            for data in self.positionSeq_data:
+            for data in positionSeq_data:
                 Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
                 self._Out_PositionSeqOut.write(Outimage)
-            return RTC.RTC_OK
         else:
-            ppositionSeq_data=[]
             if self._In_PositionSeqIn.isNew():
                  # Read position sequence data
-                while self._In_PositionSeqIn.isNew():
-                    time.sleep(0.005)
-                    positionIn_data = self._In_PositionSeqIn.read().data
-                    ppositionSeq_data.append(positionIn_data)
-                print(F"Resived position_Data{ppositionSeq_data}")
-             
+                 positionSeq_data =[]
+                 while self._In_PositionSeqIn.isNew():
+                     time.sleep(0.005)
+                     positionIn_data = self._In_PositionSeqIn.read().data
+                     positionSeq_data.append(positionIn_data)
+                 print(F"Resived position_Data{positionSeq_data}")
+                 
                  # Send position data
                  # Simply send positions one by one (consider pairs of two as coordinates) - under development
-            for data in ppositionSeq_data:
-                 Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
-                 self._Out_PositionSeqOut.write(Outimage)
+                 for data in positionSeq_data:
+                     Outimage = RTC.TimedShortSeq(RTC.Time(0, 0), data)
+                     self._Out_PositionSeqOut.write(Outimage)
                  
              
             
